@@ -5,6 +5,7 @@ import com.jme3.math.Vector3f;
 import fr.dynamx.api.physics.IRotatedCollisionHandler;
 import fr.dynamx.client.handlers.ClientDebugSystem;
 import fr.dynamx.common.DynamXContext;
+import fr.dynamx.common.DynamXMain;
 import fr.dynamx.common.contentpack.parts.PartShape;
 import fr.dynamx.common.entities.IDynamXObject;
 import fr.dynamx.common.entities.PhysicsEntity;
@@ -16,6 +17,7 @@ import fr.dynamx.utils.maths.DynamXGeometry;
 import fr.dynamx.utils.maths.DynamXMath;
 import fr.dynamx.utils.optimization.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -306,6 +308,7 @@ public class RotatedCollisionHandlerImpl implements IRotatedCollisionHandler {
      * @return The {@link IDynamXObject} {@link TileEntity} inside of the box
      */
     private PooledHashMap<Vector3f, IDynamXObject> getCollidableTileEntities(World world, MutableBoundingBox inBox) {
+
         PooledHashMap<Vector3f, IDynamXObject> entities = HashMapPool.get();
 
         int minChunkX = (int) Math.floor(inBox.minX) >> 4;
@@ -335,7 +338,7 @@ public class RotatedCollisionHandlerImpl implements IRotatedCollisionHandler {
     }
 
     @Override
-    public double[] handleCollisionWithBulletEntities(Entity entity, double mx, double my, double mz) {
+    public double[] handleCollisionWithBulletEntities(Entity entity, MoverType type, double mx, double my, double mz) {
         double icollidableCheckRadius = DynamXConfig.blockCollisionRadius;
         AxisAlignedBB copy = entity.getEntityBoundingBox().grow(0);
 
@@ -369,7 +372,7 @@ public class RotatedCollisionHandlerImpl implements IRotatedCollisionHandler {
         }
 
         motionChanged = false;
-        if (!(entity instanceof PhysicsEntity)) {
+        if (!(entity instanceof PhysicsEntity) && type.equals(MoverType.PLAYER)) {
             PooledHashMap<Vector3f, IDynamXObject> collidableEntities = getCollidableTileEntities(entity.world, new MutableBoundingBox(entity.getEntityBoundingBox()).grow(icollidableCheckRadius));
             for (Map.Entry<Vector3f, IDynamXObject> e : collidableEntities.entrySet()) {
                 //System.out.println("Input "+mx+" "+my+" "+mz+" "+nx+" "+ny+" "+nz+" "+entity.onGround+" "+entity.collidedVertically+" "+e.physicsPosition);
