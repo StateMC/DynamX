@@ -112,14 +112,14 @@ public class PickingObjectHelper {
             if (physicsEntity == null)
                 return;
             MovableModule movableModule = physicsEntity.getModuleByType(MovableModule.class);
-            //use entity id because instances depends on the side
             if (movableModule != null
                     && (!DynamXContext.getWalkingPlayers().containsKey(player)
                     || physicsEntity.getEntityId() != DynamXContext.getWalkingPlayers().get(player).getEntityId())) {
                 movableModule.usingAction = MovableModule.EnumAction.PICK;
                 movableModule.pickObjects.pickObject(player, physicsEntity, result.hitBody, result.hitPos,
                         result.hitPos.subtract(result.fromVec).length());
-            }
+            }            //use entity id because instances depends on the side
+
 
         }
     }
